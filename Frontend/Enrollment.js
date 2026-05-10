@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const planTier = button.parentElement.querySelector("h3").textContent;
 
             try {
-                const res = await fetch("http://localhost:5000/api/enrollments/enroll", {
+                const res = await fetch(`${CONFIG.API_URL}/api/enrollments/enroll`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
