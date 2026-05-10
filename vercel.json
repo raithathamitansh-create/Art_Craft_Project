@@ -1,4 +1,6 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     { "source": "/", "destination": "/Frontend/Main.html" },
     { "source": "/(.*)", "destination": "/Frontend/$1" }
