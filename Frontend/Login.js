@@ -23,7 +23,7 @@ document.querySelector("form").addEventListener("submit", async (e) => {
             localStorage.setItem("user", JSON.stringify(result.user));
             
             alert("Login successful!");
-            window.location.href = "Main.html";
+            window.location.href = "index.html";
         } else {
             alert(result.message || "Login failed");
         }
