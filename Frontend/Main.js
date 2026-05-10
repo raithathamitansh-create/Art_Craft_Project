@@ -7,7 +7,7 @@ if (loginBtn) {
     loginBtn.addEventListener("click", function () {
         // Only redirect if not already logged in (Enrollment.js handles the 'Hi, User' text)
         if (loginBtn.textContent === "Login") {
-            window.location.href = "Login.html";
+            window.location.href = "/Login.html";
         }
     });
 }
@@ -17,7 +17,7 @@ if (signupBtn) {
     signupBtn.addEventListener("click", function () {
         // Only redirect if not logged in (Enrollment.js handles the 'Logout' text)
         if (signupBtn.textContent === "Sign up") {
-            window.location.href = "Signup.html";
+            window.location.href = "/Signup.html";
         }
     });
 }
