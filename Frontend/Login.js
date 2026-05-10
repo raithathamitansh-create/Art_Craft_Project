@@ -1,4 +1,3 @@
-
 document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -7,24 +6,29 @@ document.querySelector("form").addEventListener("submit", async (e) => {
         password: document.querySelector('input[type="password"]').value
     };
 
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
+    try {
+        const res = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-    const result = await res.json();
+        const result = await res.json();
 
-    if (res.ok) {
-        window.location.href = "Main.html";
-    } else {
-        alert(result.message);
+        if (res.ok) {
+            // Store token and user info
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.user));
+            
+            alert("Login successful!");
+            window.location.href = "Main.html";
+        } else {
+            alert(result.message || "Login failed");
+        }
+    } catch (err) {
+        console.error("Login error:", err);
+        alert("An error occurred. Please try again.");
     }
 });
-
-if (res.ok) {
-    localStorage.setItem("token", result.token);
-    window.location.href = "Main.html";
-}

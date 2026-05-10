@@ -1,85 +1,69 @@
-const db = require("../db");
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // SIGNUP
 exports.registerUser = async (req, res) => {
     const { first_name, last_name, email, mobile, password } = req.body;
 
+    if (!email || !password || !first_name) {
+        return res.status(400).json({ message: "Please provide all required fields" });
+    }
+
     try {
+        const existingUser = await User.findByEmail(email);
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
+        await User.create({ first_name, last_name, email, mobile, password: hashedPassword });
 
-        const sql = "INSERT INTO users (first_name, last_name, email, mobile, password) VALUES (?, ?, ?, ?, ?)";
-
-        db.query(sql, [first_name, last_name, email, mobile, hashedPassword], (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: err });
-            }
-            res.json({ message: "Signup successful" });
-        });
-
+        res.status(201).json({ message: "Signup successful" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Signup error:", err);
+        res.status(500).json({ error: "An error occurred during signup" });
     }
 };
 
-
 // LOGIN
-exports.loginUser = (req, res) => {
+exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-    const sql = "SELECT * FROM users WHERE email = ?";
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+    }
 
-    db.query(sql, [email], async (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-
-        if (result.length === 0) {
-            return res.status(401).json({ message: "User not found" });
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
         }
-
-        const user = result[0];
 
         const match = await bcrypt.compare(password, user.password);
-
         if (!match) {
-            return res.status(401).json({ message: "Wrong password" });
+            return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        res.json({ message: "Login successful", user });
-    });
-};
-
-const jwt = require("jsonwebtoken");
-
-exports.loginUser = (req, res) => {
-    const { email, password } = req.body;
-
-    const sql = "SELECT * FROM users WHERE email = ?";
-
-    db.query(sql, [email], async (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-
-        if (result.length === 0) {
-            return res.status(401).json({ message: "User not found" });
-        }
-
-        const user = result[0];
-
-        const match = await bcrypt.compare(password, user.password);
-
-        if (!match) {
-            return res.status(401).json({ message: "Wrong password" });
-        }
-
-        // 🔥 CREATE TOKEN
+        // Create JWT Token
         const token = jwt.sign(
             { id: user.id, email: user.email },
-            "secretkey123",
+            process.env.JWT_SECRET || "default_secret",
             { expiresIn: "1h" }
         );
 
         res.json({
             message: "Login successful",
-            token: token
+            token: token,
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email
+            }
         });
-    });
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ error: "An error occurred during login" });
+    }
 };
