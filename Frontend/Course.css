@@ -1,0 +1,206 @@
+/* Course-specific styles */
+
+/* Import Main.css for Header and Footer consistency */
+@import url('Main.css');
+
+/* Reset some Main.css defaults that might interfere */
+main {
+    margin-top: 110px;
+    padding: 40px 20px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 410px); /* 110 header + 300 footer */
+}
+
+/* Hero Section */
+.course-hero {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.course-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.course-hero img {
+    width: 80%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
+}
+
+/* Info Section */
+.course-info {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #444;
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.course-info h2 {
+    margin-bottom: 20px;
+    color: #333;
+    border-left: 5px solid #4b5cb9;
+    padding-left: 15px;
+}
+
+/* Pricing Section */
+.pricing-section {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+}
+
+.pricing-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #1a1a1a;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.pricing-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.pricing-card.premium {
+    border: 2px solid #4b5cb9;
+    transform: scale(1.05);
+}
+
+.pricing-card.premium:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+.pricing-card.pro {
+    background: #1a1a1a;
+    color: white;
+}
+
+.pricing-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.pricing-card .price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #4b5cb9;
+}
+
+.pricing-card.pro .price {
+    color: #fff;
+}
+
+.pricing-card ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.pricing-card ul li {
+    margin-bottom: 12px;
+    padding-left: 25px;
+    position: relative;
+}
+
+.pricing-card ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #4b5cb9;
+    font-weight: bold;
+}
+
+.pricing-card.pro ul li::before {
+    color: #fff;
+}
+
+.buy-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #4b5cb9;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.buy-btn:hover {
+    background: #3a4a9c;
+}
+
+.pricing-card.pro .buy-btn {
+    background: white;
+    color: #1a1a1a;
+}
+
+.pricing-card.pro .buy-btn:hover {
+    background: #e0e0e0;
+}
+
+/* Badge for Popular choice */
+.badge {
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: #4b5cb9;
+    color: white;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .course-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .pricing-card.premium {
+        transform: scale(1);
+    }
+    
+    .pricing-card.premium:hover {
+        transform: translateY(-10px);
+    }
+}
