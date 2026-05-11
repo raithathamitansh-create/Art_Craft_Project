@@ -26,6 +26,10 @@ exports.registerUser = async (req, res) => {
     }
 };
 
+const db = require("../db");
+const { generateOTP, hashOTP } = require("../utils/otp");
+const { sendOTPEmail } = require("../utils/sendEmail");
+
 // LOGIN
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -45,7 +49,61 @@ exports.loginUser = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        // Create JWT Token
+        // Generate OTP
+        const otp = generateOTP();
+        const hashedOtp = hashOTP(otp);
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+        // Clear old OTPs for this user
+        await db.query("DELETE FROM otp_codes WHERE user_id = ?", [user.id]);
+
+        // Insert new OTP
+        await db.query("INSERT INTO otp_codes (user_id, otp, expires_at) VALUES (?, ?, ?)", [user.id, hashedOtp, expiresAt]);
+
+        // Send Email
+        await sendOTPEmail(user.email, otp);
+
+        res.json({ message: "OTP sent" });
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ error: "An error occurred during login" });
+    }
+};
+
+// VERIFY OTP
+exports.verifyOtp = async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ message: "Email and OTP are required" });
+    }
+
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const [rows] = await db.query("SELECT * FROM otp_codes WHERE user_id = ? ORDER BY id DESC LIMIT 1", [user.id]);
+        if (rows.length === 0) {
+            return res.status(400).json({ message: "No OTP request found" });
+        }
+
+        const otpRecord = rows[0];
+        const now = new Date();
+
+        if (now > new Date(otpRecord.expires_at)) {
+            return res.status(400).json({ message: "OTP has expired" });
+        }
+
+        const hashedInputOtp = hashOTP(otp);
+        if (hashedInputOtp !== otpRecord.otp) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        // OTP is valid - Issue JWT
+        await db.query("DELETE FROM otp_codes WHERE user_id = ?", [user.id]); // Clean up
+
         const token = jwt.sign(
             { id: user.id, email: user.email },
             process.env.JWT_SECRET || "default_secret",
@@ -63,7 +121,7 @@ exports.loginUser = async (req, res) => {
             }
         });
     } catch (err) {
-        console.error("Login error:", err);
-        res.status(500).json({ error: "An error occurred during login" });
+        console.error("OTP Verification error:", err);
+        res.status(500).json({ error: "An error occurred during verification" });
     }
 };

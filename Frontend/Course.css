@@ -210,7 +210,7 @@ main {
 
 /* Pro Card */
 .pricing-card.pro {
-  background: var(--secondary-color);
+  background: #111827; /* Hardcoded dark color so it stays dark in both themes */
   color: white;
 }
 
@@ -224,7 +224,7 @@ main {
 
 .pricing-card.pro .buy-btn {
   background: white;
-  color: var(--secondary-color);
+  color: #111827;
   border-color: white;
 }
 

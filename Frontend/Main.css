@@ -409,9 +409,10 @@ hr {
 
 /* ================= FOOTER ================= */
 .site-footer {
-  background: var(--secondary-color);
-  color: #f3f4f6;
+  background: var(--card-bg);
+  color: var(--text-main);
   padding: 60px 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .footer-container {
@@ -421,21 +422,21 @@ hr {
 }
 
 .footer-left h3 {
-  color: #fff;
+  color: var(--secondary-color);
   font-size: 1.8rem;
   margin-bottom: 20px;
 }
 
 .footer-left p {
-  color: #9ca3af;
+  color: var(--text-muted);
   line-height: 1.8;
   margin-bottom: 20px;
 }
 
 .footer-small {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 0.9rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--border-color);
   padding-top: 20px;
   margin-top: 20px;
 }
